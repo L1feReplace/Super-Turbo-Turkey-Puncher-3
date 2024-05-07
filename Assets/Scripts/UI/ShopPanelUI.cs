@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ShopUI : MonoBehaviour
+public class ShopPanelUI : MonoBehaviour
 {
     [SerializeField] private GameObject _shopPanel;
 
@@ -8,4 +8,5 @@ public class ShopUI : MonoBehaviour
     {
         _shopPanel.SetActive(!_shopPanel.activeSelf);
     }
+
 }
