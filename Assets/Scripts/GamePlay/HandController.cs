@@ -9,6 +9,7 @@ public class HandController : MonoBehaviour
 
     private int score;
     private int clickScore = 1;
+    private int currentIndex = 0; // ƒобавл€ем переменную дл€ хранени€ текущего индекса
     private UIUpdater uiUpdater;
     private RectTransform rectTransform;
     private GameObject turkey;
@@ -18,25 +19,29 @@ public class HandController : MonoBehaviour
     {
         rectTransform = GetComponent<RectTransform>();
         uiUpdater = FindObjectOfType<UIUpdater>();
+        // «агрузка сохраненного значени€ индекса
+        currentIndex = PlayerPrefs.GetInt("CurrentTurkeyIndex", 0);
         PlayerPrefsManager.LoadPlayerPrefs(costInt, ref score, ref clickScore);
         UpdateUI();
         ShowCurrentTurkey();
     }
 
+    private void OnDestroy()
+    {
+        PlayerPrefs.SetInt("CurrentTurkeyIndex", currentIndex); // —охранение текущего индекса
+        PlayerPrefsManager.SavePlayerPrefs(costInt, score, clickScore);
+    }
+
+
     private void ShowCurrentTurkey()
     {
-        int index = Mathf.Clamp(clickScore - 1, 0, turkeyImages.Length - 1);
         foreach (var image in turkeyImages) image.SetActive(false);
         foreach (var image in turkeyHitImages) image.SetActive(false);
-        turkey = turkeyImages[index];
-        turkeyHit = turkeyHitImages[index];
+        turkey = turkeyImages[currentIndex];
+        turkeyHit = turkeyHitImages[currentIndex];
         turkey.SetActive(true);
     }
 
-    private void OnDestroy()
-    {
-        PlayerPrefsManager.SavePlayerPrefs(costInt, score, clickScore);
-    }
 
     public void OnClickButton()
     {
@@ -52,6 +57,7 @@ public class HandController : MonoBehaviour
             score -= costInt[levelIndex];
             costInt[levelIndex] *= 2;
             clickScore *= 2;
+            currentIndex++; // ”величиваем текущий индекс
             UpdateUI();
             ShowCurrentTurkey();
         }
@@ -79,3 +85,4 @@ public class HandController : MonoBehaviour
         turkeyHit.SetActive(false);
     }
 }
+
